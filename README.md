@@ -1,4 +1,4 @@
-# gotenancy-dapp
+# tenancy-dapp
 
 Abigen
 ======
