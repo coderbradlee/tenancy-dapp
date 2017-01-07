@@ -1,37 +1,37 @@
 pragma solidity ^0.4.4;
 
 contract EjariRules {
-	address owner;
+    address owner;
 
-	struct Rule {
-		uint incrementPercentage;
-		uint maxRent;
-	}
+    struct Rule {
+        uint incrementPercentage;
+        uint maxRent;
+    }
 
-	mapping (bytes32 => Rule) rules;
+    mapping (bytes32 => Rule) rules;
 
-	function EjariRules() {
-		owner = msg.sender;
-	}
+    function EjariRules() {
+        owner = msg.sender;
+    }
 
-	function addEjariRule(string latitude, string longitude, uint incrementPercentage, uint maxRent) {
-		if (msg.sender != owner) {
-			throw;
-		}
+    function addEjariRule(string latitude, string longitude, uint incrementPercentage, uint maxRent) {
+        if (msg.sender != owner) {
+            throw;
+        }
 
-		rules[sha256(latitude, longitude)] = Rule(incrementPercentage, maxRent);
-	}
+        rules[sha256(latitude, longitude)] = Rule(incrementPercentage, maxRent);
+    }
 
-	function isValid(string latitude, string longitude, uint oldRent, uint newRent) public returns (bool) {
-		Rule rule = rules[sha256(latitude, longitude)];
+    function isValid(string latitude, string longitude, uint oldRent, uint newRent) public returns (bool) {
+        Rule rule = rules[sha256(latitude, longitude)];
 
-		uint maxIncrementedRent = (oldRent * (100 + rule.incrementPercentage)) / 100;
+        uint maxIncrementedRent = (oldRent * (100 + rule.incrementPercentage)) / 100;
 
-		if (newRent > rule.maxRent) return false;
-		if (newRent > maxIncrementedRent) return false;
+        if (newRent > rule.maxRent) return false;
+        if (newRent > maxIncrementedRent) return false;
 
-		return true;
-	}
+        return true;
+    }
 }
 
 contract Property {
@@ -52,27 +52,27 @@ contract Property {
     mapping(address => Rating) tenantRatings;
 
     struct Rating {
-    	uint totalRatings;
-    	uint numberOfRatings;
+        uint totalRatings;
+        uint numberOfRatings;
     }
 
     Rating public ownerRating;
     Rating public propertyRating;
 
     function rateTenant(uint rating) onlyOwner {
-    	Rating tenantRating = tenantRatings[tenant];
-    	tenantRating.totalRatings += rating;
-    	tenantRating.numberOfRatings++;
+        Rating tenantRating = tenantRatings[tenant];
+        tenantRating.totalRatings += rating;
+        tenantRating.numberOfRatings++;
     }
 
     function rateOwner(uint rating) onlyTenant {
-    		ownerRating.totalRatings += rating;
-        	ownerRating.numberOfRatings++;
+            ownerRating.totalRatings += rating;
+            ownerRating.numberOfRatings++;
     }
 
     function rateProperty(uint rating) onlyTenant {
-        		propertyRating.totalRatings += rating;
-            	propertyRating.numberOfRatings++;
+                propertyRating.totalRatings += rating;
+                propertyRating.numberOfRatings++;
         }
 
     event Registered(address owner, address government);
@@ -89,8 +89,8 @@ contract Property {
     }
 
     modifier onlyGovernment() {
-    	if (msg.sender != government) throw;
-    	_;
+        if (msg.sender != government) throw;
+        _;
     }
 
     function validate() onlyGovernment {
@@ -118,13 +118,13 @@ contract Property {
     }
 
     modifier onlyOwner() {
-    	if (msg.sender != owner) throw;
-    	_;
+        if (msg.sender != owner) throw;
+        _;
     }
 
     modifier onlyTenant() {
-        	if (msg.sender != tenant) throw;
-        	_;
+            if (msg.sender != tenant) throw;
+            _;
         }
 
     event Accepted(address owner, address tenant);
@@ -134,8 +134,8 @@ contract Property {
     }
 
     modifier onlyAcceptedTenant() {
-    	if (acceptedOffer && tenantOffer.tenant != msg.sender) throw;
-    	_;
+        if (acceptedOffer && tenantOffer.tenant != msg.sender) throw;
+        _;
     }
 
     event Payment(address tenant, address owner);
@@ -158,18 +158,18 @@ contract Property {
     }
 
     // owner will update the rent value and then the whole cycle of tenant offer can start
-	function updateRent(uint _rent) onlyOwner {
-    	if (now < endTime) throw;
+    function updateRent(uint _rent) onlyOwner {
+        if (now < endTime) throw;
 
-    	rent = _rent;
+        rent = _rent;
     }
 
     // termination
     function terminate(uint deduction) payable onlyOwner {
-		if (!(tenant.send(security - deduction) && owner.send(deduction))) throw;
+        if (!(tenant.send(security - deduction) && owner.send(deduction))) throw;
 
-		// reset values?
-		tenantOffer.tenant = 0;
+        // reset values?
+        tenantOffer.tenant = 0;
         tenantOffer.startTime = 0;
         tenantOffer.endTime = 0;
         acceptedOffer = false;
