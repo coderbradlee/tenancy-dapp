@@ -9,12 +9,13 @@ import (
 	"os"
 	"bufio"
 	"flag"
+	"math/big"
 )
 
 const keyFile  = "/Users/raviupreti85/Library/Ethereum/dev/keystore/" +
 	"UTC--2016-12-29T21-53-55.927410990Z--429d61dc95cac25a24feffcf7db98f76d6ab3796"
 
-func main() {
+func commands() {
 	if len(os.Args) == 1 {
 		fmt.Println("usage: <command> [<args>]")
 		os.Exit(1)
@@ -24,6 +25,7 @@ func main() {
 	balanceAddress := balanceCommand.String("address", "", "Address of the account")
 
 	deployCommand := flag.NewFlagSet("deploy", flag.ExitOnError)
+	ejariAddress := balanceCommand.String("address", "", "Address of the account")
 
 	registryCommand := flag.NewFlagSet("registry", flag.ExitOnError)
 	registryAddress := registryCommand.String("address", "", "Address of the registry")
@@ -35,7 +37,8 @@ func main() {
 		getBalance(address)
 	case "deploy":
 		deployCommand.Parse(os.Args[2:])
-		doDeploy()
+		address := common.HexToAddress(*ejariAddress)
+		doDeployRegistry(address)
 	case "registry":
 		registryCommand.Parse(os.Args[2:])
 		address := common.HexToAddress(*registryAddress)
@@ -59,7 +62,7 @@ func getBalance(address common.Address) {
 	doGetBalance(client, address)
 }
 
-func doDeploy() {
+func doDeployRegistry(address common.Address) {
 	file, err := os.Open(keyFile)
 
 	transactOpts, err := bind.NewTransactor(bufio.NewReader(file), "password")
@@ -69,7 +72,7 @@ func doDeploy() {
 		os.Exit(1)
 	}
 
-	deploy(transactOpts)
+	deployRegistry(transactOpts, address)
 }
 
 func getRegistry(address common.Address) {
@@ -96,7 +99,7 @@ func getRegistry(address common.Address) {
 		os.Exit(1)
 	}
 
-	transaction, err := registry.IsPropertyOwner(transactOpts, address);
+	transaction, err := registry.IsValidTenancy(transactOpts, address, big.NewInt(10), big.NewInt(10));
 
 	if (err != nil) {
 		fmt.Printf("%v", err)

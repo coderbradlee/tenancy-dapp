@@ -36,7 +36,7 @@ contract Locality is Rated {
 	}
 }
 
-contract EjariRules {
+contract EjariRulesC {
 	address owner;
 
 	struct Rule {
@@ -46,7 +46,7 @@ contract EjariRules {
 
 	mapping (address => Rule) localityRules;
 
-	function EjariRules() {
+	function EjariRulesC() {
 		owner = msg.sender;
 	}
 
@@ -89,11 +89,11 @@ contract PropertyC is Rated {
 
 contract Registry {
     address public registrar;
-    EjariRules public ejariRules;
+    EjariRulesC public ejariRules;
 
     mapping(address => Person) public ownership; // no shared ownership at the moment
 
-    function Registry(EjariRules ejariRule) {
+    function Registry(EjariRulesC ejariRule) {
         registrar = msg.sender;
     }
 

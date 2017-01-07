@@ -35,7 +35,7 @@ contract EjariRules {
 }
 
 contract Property {
-    address constant government = 0x429d61dc95cac25a24feffcf7db98f76d6ab3796;
+    address government = 0x429d61dc95cac25a24feffcf7db98f76d6ab3796;
     bool valid = false;
 
     string latitude;
@@ -58,6 +58,11 @@ contract Property {
 
     Rating public ownerRating;
     Rating public propertyRating;
+
+    // temporary function mate
+    function setGovernment(address _government) {
+    	government = _government;
+    }
 
     function rateTenant(uint rating) onlyOwner {
         Rating tenantRating = tenantRatings[tenant];
