@@ -85,6 +85,7 @@ contract Property {
     	_;
     }
 
+    event Payment(address tenant, address owner);
     function pay() payable onlyAcceptedTenant {
         if (msg.value < rent + security) throw;
 
@@ -93,6 +94,8 @@ contract Property {
         tenant = tenantOffer.tenant;
         startTime = tenantOffer.startTime;
         endTime = tenantOffer.endTime;
+
+        Payment(tenant, owner);
     }
 
 
