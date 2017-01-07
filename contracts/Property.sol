@@ -99,23 +99,7 @@ contract Property {
         Validated(government, owner);
     }
 
-    struct Offer {
-        address tenant;
-        uint startTime;
-        uint endTime;
-    }
-
-    Offer tenantOffer;
-    bool acceptedOffer = false;
-
     event Interested(address tenant, address owner);
-
-    function tenantInterested(uint startTime, uint endTime) {
-        if (acceptedOffer) throw;
-
-        tenantOffer = Offer(msg.sender, startTime, endTime);
-        Interested(msg.sender, owner);
-    }
 
     modifier onlyOwner() {
         if (msg.sender != owner) throw;
@@ -128,32 +112,14 @@ contract Property {
         }
 
     event Accepted(address owner, address tenant);
-    function acceptOffer() onlyOwner {
-        acceptedOffer = true;
-        Accepted(owner, tenantOffer.tenant);
-    }
-
-    modifier onlyAcceptedTenant() {
-        if (acceptedOffer && tenantOffer.tenant != msg.sender) throw;
-        _;
-    }
 
     event Payment(address tenant, address owner);
-    function pay() payable onlyAcceptedTenant {
+    function pay(uint startTime, uint endTime) payable {
         if (msg.value < rent + security) throw;
 
         if (!owner.send(rent)) throw;
 
-        tenant = tenantOffer.tenant;
-        startTime = tenantOffer.startTime;
-        endTime = tenantOffer.endTime;
-
-        // reset values
-        tenantOffer.tenant = 0;
-        tenantOffer.startTime = 0;
-        tenantOffer.endTime = 0;
-        acceptedOffer = false;
-
+        tenant = msg.sender;
         Payment(tenant, owner);
     }
 
@@ -169,10 +135,6 @@ contract Property {
         if (!(tenant.send(security - deduction) && owner.send(deduction))) throw;
 
         // reset values?
-        tenantOffer.tenant = 0;
-        tenantOffer.startTime = 0;
-        tenantOffer.endTime = 0;
-        acceptedOffer = false;
         tenant = 0;
         startTime = 0;
         endTime = 0;
