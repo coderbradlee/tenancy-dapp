@@ -71,12 +71,12 @@ contract EjariRules {
 
 }
 
-contract Property is Rated {
+contract PropertyC is Rated {
     string latitude;
     string longitude;
     Locality locality;
 
-    function Property(string lt, string ln, Locality loc) {
+    function PropertyC(string lt, string ln, Locality loc) {
         latitude = lt;
         longitude = ln;
         locality = loc;
@@ -103,7 +103,7 @@ contract Registry {
     }
 
 
-    function isValidTenancy(Property property, uint rent, uint incrementPercentage) public returns (bool) {
+    function isValidTenancy(PropertyC property, uint rent, uint incrementPercentage) public returns (bool) {
         Person owner = ownership[address(property)];
         if (msg.sender != owner.getAccountAddress()) return false;
 
@@ -145,7 +145,7 @@ contract Tenancy {
     event Withdraw(address prospectiveTenant, address owner);
     event RejectNegotiation(address owner, address prospectiveTenant);
 
-    function Tenancy(Registry registry, Person person, Property property, uint rent, uint security, uint start, uint end) {
+    function Tenancy(Registry registry, Person person, PropertyC property, uint rent, uint security, uint start, uint end) {
         // check if tenancy is valid as per ejari rules
         if (registry.isValidTenancy(property, rent, 0)) {
             owner = person;
