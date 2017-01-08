@@ -25,7 +25,7 @@ func commands() {
 	balanceAddress := balanceCommand.String("address", "", "Address of the account")
 
 	deployCommand := flag.NewFlagSet("deploy", flag.ExitOnError)
-	ejariAddress := balanceCommand.String("address", "", "Address of the account")
+	ejariAddress := deployCommand.String("address", "", "Address of the account")
 
 	registryCommand := flag.NewFlagSet("registry", flag.ExitOnError)
 	registryAddress := registryCommand.String("address", "", "Address of the registry")

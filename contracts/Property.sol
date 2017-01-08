@@ -56,8 +56,8 @@ contract Property {
         uint numberOfRatings;
     }
 
-    Rating public ownerRating;
-    Rating public propertyRating;
+    Rating public ownerRating = Rating(42, 10);
+    Rating public propertyRating = Rating(37, 10);
 
     // temporary function mate
     function setGovernment(address _government) {
@@ -78,7 +78,31 @@ contract Property {
     function rateProperty(uint rating) onlyTenant {
                 propertyRating.totalRatings += rating;
                 propertyRating.numberOfRatings++;
-        }
+    }
+
+    function getLatitude() returns (string) {
+    	return latitude;
+    }
+
+    function getLongitude() returns (string) {
+    	return longitude;
+    }
+
+    function getOwnerRating() returns (uint) {
+    	return (ownerRating.totalRatings / ownerRating.numberOfRatings);
+    }
+
+    function getPropertyRating() returns (uint) {
+        return (propertyRating.totalRatings / propertyRating.numberOfRatings);
+    }
+
+    function getOwnerRatingTuple() returns (uint, uint) {
+        return (ownerRating.totalRatings, ownerRating.numberOfRatings);
+    }
+
+    function getPropertyRatingTuple() returns (uint, uint) {
+        return (propertyRating.totalRatings, propertyRating.numberOfRatings);
+    }
 
     event Registered(address owner, address government);
     event Validated(address government, address owner);
